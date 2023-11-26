@@ -173,6 +173,7 @@ def model_charging_flexibility(df_car, df_simulation, df_normal, car_number, max
     df = df_car.copy()
     car_rows = {car: df_prov.loc[df_prov['car'] == car] for car in range(1, car_number+1)}
     max_power = max_power * (1000 / (ratio * 4))
+    quantity_regulation = quantity_regulation * (1000 / (ratio * 4))
     # print("max_power: {}".format(max_power))
 
     for time_interval, row_df in tqdm(df.iterrows(), total=len(df), desc="Processing rows"):
@@ -244,9 +245,5 @@ def model_charging_flexibility(df_car, df_simulation, df_normal, car_number, max
     df_summed_modif[columns_to_multiply] = df_summed_modif[columns_to_multiply].apply(lambda x: (x * ratio) / 1000)
     total_energy_needed = df_summed_modif['total'].sum()
     print("total energy needed: {} Mwh".format(total_energy_needed))
-
-    # # multiply by 4 because we have 15 minutes interval to get the power in MW
-    # columns_to_multiply = ["up", "down", "total"]
-    # df_summed[columns_to_multiply] = df_summed[columns_to_multiply].apply(lambda x: x * 4)
 
     return df_summed, total_energy_needed
