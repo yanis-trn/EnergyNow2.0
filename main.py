@@ -23,27 +23,31 @@ from src.utils import visualize_kwh_delivered, visualize_hourly_distribution, in
 from src.model_charging import model_charging_normal, model_charging_flexibility
 
 warnings.filterwarnings("ignore")
+plt.ioff()
 
 ## This part is used to forecast the number of cars in the future.
 
 # data on EV adoption from: https://www.bfs.admin.ch/bfs/en/home/statistics/mobility-transport/transport-infrastructure-vehicles/vehicles/road-vehicles-stock-level-motorisation.html
 # Decide the consrtaint for the number of different vehicles present in 2050
+print("##############################################################################################################################################################################")
+print("Loading historical data on EV adoption...")
 
 data = pd.read_csv('data/ev_data.csv', encoding='ISO-8859-1')
 
 data_ev = process_data(data)
 
+print("Forecasting the number of EV in Switzerland up to 2050...")
 data_ev_forecast = forecast_number_car(data_ev, year_constraint=2050, petrol_constraint=10000, diesel_constraint=0 , hybrid_constraint = 1e6, battery_elecrtic_constraint=5e6, pol_degree=3, weights = "exp").get_df()
 
-# plot_evolution(data_ev_forecast)
-# save_plot(data_ev_forecast, "plots/evolution_number_car.png")
+plot_evolution(data_ev_forecast)
+save_plot(data_ev_forecast, "plots/evolution_number_car.png")
 
 
 print("##############################################################################################################################################################################")
 
 data_charging, event_counts = load_data()
-visualize_kwh_delivered(data_charging)
-visualize_hourly_distribution(event_counts)
+# visualize_kwh_delivered(data_charging)
+# visualize_hourly_distribution(event_counts)
 
 year_simulation = int(input("Enter the year of simulation: "))
 
@@ -62,7 +66,7 @@ print("#########################################################################
 
 max_power = int(input("Enter the maximum power consumption on the grid in Mwh: "))
 df_summed_flex, total_energy_needed_flex = model_charging_flexibility(df_car, df_simulation, df_summed, car_number_simulated, max_power,time_regulation="00:00", quantity_regulation = 0, duration_regulation = 0, type_regulation = None, ratio = ratio)
-visualize_flex_charging(df_summed_flex, car_number_real, year_simulation, total_energy_needed_flex, ratio)
+visualize_flex_charging(df_summed_flex, car_number_real, year_simulation, total_energy_needed_flex, ratio, "plots/flex_charging_{}.png".format(max_power))
 
 print("##############################################################################################################################################################################")
 
@@ -70,9 +74,7 @@ time_regulation = str(input("Enter the time when regulation is needed: "))
 quantity_regulation = int(input("Enter the quantity of energy regulation needed in Mwh: "))
 duration_regulation = int(input("Enter the duration of the regulation in minutes: "))
 type_regulation = str(input("Enter the type of regulation (up or down): "))
-print("{} regulation of {} Mwh needed for {} minutes at {}".format(type_regulation, quantity_regulation, duration_regulation, time_regulation))
+print("Request: {} regulation of {} Mwh needed for {} minutes at {}".format(type_regulation, quantity_regulation, duration_regulation, time_regulation))
 
-df_summed_flex, total_energy_needed_flex = model_charging_flexibility(df_car, df_simulation, df_summed, car_number_simulated, max_power,time_regulation, quantity_regulation, duration_regulation, type_regulation, ratio = ratio)
-visualize_flex_charging(df_summed_flex, car_number_real, year_simulation, total_energy_needed_flex, ratio)
-
-
+df_summed_flex, total_energy_needed_flex = model_charging_flexibility(df_car, df_simulation, df_summed_flex, car_number_simulated, max_power,time_regulation, quantity_regulation, duration_regulation, type_regulation, ratio = ratio)
+visualize_flex_charging(df_summed_flex, car_number_real, year_simulation, total_energy_needed_flex, ratio, "plots/flex_charging_{}_{}_{}_{}.png".format(time_regulation, quantity_regulation, duration_regulation, type_regulation))

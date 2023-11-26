@@ -106,7 +106,7 @@ def plot_evolution(df: pd.core.frame.DataFrame) -> None:
     x_tick_labels = [str(year) for year in x_ticks]
     
     plt.xticks(ticks=x_ticks, labels=x_tick_labels)
-    
+    plt.xticks(ticks=x_ticks, labels=x_tick_labels, rotation=45)
 
     plt.legend()
     plt.xlabel('Year')
@@ -129,10 +129,11 @@ def save_plot(df: pd.core.frame.DataFrame, save_path = "plots") -> None:
     x_tick_labels = [str(year) for year in x_ticks]
     
     plt.xticks(ticks=x_ticks, labels=x_tick_labels)
-    
+    plt.xticks(ticks=x_ticks, labels=x_tick_labels, rotation=45)
 
     plt.legend()
     plt.xlabel('Year')
     plt.ylabel('Number of cars')
     plt.title('Evolution of the number of cars in Switzerland over years')
     plt.savefig(save_path)
+    plt.close()

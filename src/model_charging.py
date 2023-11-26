@@ -142,16 +142,12 @@ def model_charging_normal(df_car,df_simulation, car_number, ratio):
     columns_to_multiply = ["down", "total"]
     df_summed_modif[columns_to_multiply] = df_summed_modif[columns_to_multiply].apply(lambda x: (x * ratio) / 1000)
     total_energy_needed = df_summed_modif['total'].sum()
-    print("total energy needed: {} Mwh".format(total_energy_needed))
-
-    # # multiply by 4 because we have 15 minutes interval to get the power in kW
-    # columns_to_multiply = ["down", "total"]
-    # df_summed[columns_to_multiply] = df_summed[columns_to_multiply].apply(lambda x: x * 4)
+    print("total energy needed over the day: {} Mwh".format(round(total_energy_needed,2)))
 
     return df_summed, total_energy_needed
 
 
-def model_charging_flexibility(df_car, df_simulation, df_normal, car_number, max_power,time_regulation, quantity_regulation, duration_regulation, type_regulation, ratio):
+def model_charging_flexibility(df_car, df_simulation, df_normal, car_number, max_pow,time_regulation, quantity_regulation, duration_regulation, type_regulation, ratio):
     from src.utils import generate_time_intervals
     """
     This function model the charging of an EV with a given power and a given required energy when just charging when plugged in
@@ -172,7 +168,7 @@ def model_charging_flexibility(df_car, df_simulation, df_normal, car_number, max
     df_prov = df_simulation.copy()
     df = df_car.copy()
     car_rows = {car: df_prov.loc[df_prov['car'] == car] for car in range(1, car_number+1)}
-    max_power = max_power * (1000 / (ratio * 4))
+    # max_power = max_pow * (1000 / (ratio * 4))
     quantity_regulation = quantity_regulation * (1000 / (ratio * 4))
     # print("max_power: {}".format(max_power))
 
@@ -183,6 +179,7 @@ def model_charging_flexibility(df_car, df_simulation, df_normal, car_number, max
         # print("time_interval: {}".format(time_interval))
 
         if time_interval in list_regulation:
+            # print("time_interval: {}".format(time_interval))
             total_power = df_normal.loc[time_interval]["total"]
             # print("total_power: {}".format(total_power))
             if type_regulation == "down":
@@ -191,6 +188,8 @@ def model_charging_flexibility(df_car, df_simulation, df_normal, car_number, max
             elif type_regulation == "up":
                 max_power = total_power + quantity_regulation
                 # print("max_power: {}".format(max_power))
+        else:
+            max_power = max_pow * (1000 / (ratio * 4))
 
         for car in range(1, car_number+1):
             row = car_rows[car]
@@ -244,6 +243,6 @@ def model_charging_flexibility(df_car, df_simulation, df_normal, car_number, max
     columns_to_multiply = ["up", "down", "total"]
     df_summed_modif[columns_to_multiply] = df_summed_modif[columns_to_multiply].apply(lambda x: (x * ratio) / 1000)
     total_energy_needed = df_summed_modif['total'].sum()
-    print("total energy needed: {} Mwh".format(total_energy_needed))
+    print("total energy needed over the day: {} Mwh".format(round(total_energy_needed,2)))
 
     return df_summed, total_energy_needed

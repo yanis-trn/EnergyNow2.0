@@ -27,9 +27,9 @@ def visualize_kwh_delivered(df):
     plt.xlabel('Number of sessions')
     plt.ylabel('kwh delivered')
     plt.title('Distribution of kwh delivered over sessions')
-    # plt.savefig('plots/distribution_kwh_delivered.png')
+    plt.savefig('plots/distribution_kwh_delivered.png')
     # plt.show()
-
+    plt.close()
 
 def visualize_hourly_distribution(df):
     plt.figure(figsize=(15, 8))
@@ -45,8 +45,9 @@ def visualize_hourly_distribution(df):
     labels = ax.get_xticks()[::N]
     ax.set_xticks(labels)
     ax.set_xticklabels(df['15_min_interval'][::N], rotation=45)
-    # plt.savefig('plots/probability_distribution_charging_sessions.png')
+    plt.savefig('plots/probability_distribution_charging_sessions.png')
     # plt.show()
+    plt.close()
 
 def round_time_15(original_time: datetime) -> datetime:
     # Calculate the number of minutes to the next quarter hour
@@ -149,9 +150,10 @@ def visualize_normal_charging(df_summed, car_number, year_simulation, total_ener
     plt.savefig('plots/normal_charging.png')
     plt.show()
 
-def visualize_flex_charging(df, car_number, year_simulation, total_energy_needed, ratio):
+def visualize_flex_charging(df_summed, car_number, year_simulation, total_energy_needed, ratio, path):
     plt.figure(figsize=(16, 6))
 
+    df = df_summed.copy()
     columns_to_multiply = ["up","down","total"]
     df[columns_to_multiply] = df[columns_to_multiply].apply(lambda x: (x * ratio * 4) / 1000)
     # Plot "total", "up", and "down"
@@ -165,7 +167,7 @@ def visualize_flex_charging(df, car_number, year_simulation, total_energy_needed
 
 
     # Show the plot
-    plt.savefig('plots/flex_charging.png')
+    plt.savefig(path)
     plt.show()
 
 def generate_time_intervals(start_time, num_minutes):
