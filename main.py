@@ -3,23 +3,13 @@ This file is the main file for the project.
 """
 
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
-import datetime
-from tqdm import tqdm
-from sklearn.preprocessing import PolynomialFeatures
-from sklearn.linear_model import LinearRegression
-import json
-import requests
-from datetime import datetime
-from datetime import timedelta
-import random
 import warnings
+import re
 
 from src.forecast_number_car import process_data, plot_evolution, forecast_number_car, save_plot
 from src.load_data import load_data
-from src.utils import visualize_kwh_delivered, visualize_hourly_distribution, initialize_dataframe_cars, initialize_dataframe_states, get_number_EV, visualize_normal_charging, visualize_flex_charging
+from src.utils import visualize_kwh_delivered, visualize_hourly_distribution, initialize_dataframe_cars, initialize_dataframe_states, get_number_EV, visualize_normal_charging, visualize_flex_charging, get_flexibility_conditions
 from src.model_charging import model_charging_normal, model_charging_flexibility
 
 warnings.filterwarnings("ignore")
@@ -51,8 +41,9 @@ data_charging, event_counts = load_data()
 
 year_simulation = int(input("Enter the year of simulation: "))
 
-car_number_real = get_number_EV(data_ev_forecast, year_simulation)
-car_number_simulated = 1000
+ratio_car_charging = 0.8
+car_number_real = get_number_EV(data_ev_forecast, year_simulation)*ratio_car_charging
+car_number_simulated = 5000
 ratio = car_number_real / car_number_simulated
 print("Number of EV in {}: {}".format(year_simulation, car_number_real))
 
@@ -70,10 +61,8 @@ visualize_flex_charging(df_summed_flex, car_number_real, year_simulation, total_
 
 print("##############################################################################################################################################################################")
 
-time_regulation = str(input("Enter the time when regulation is needed: "))
-quantity_regulation = int(input("Enter the quantity of energy regulation needed in Mwh: "))
-duration_regulation = int(input("Enter the duration of the regulation in minutes: "))
-type_regulation = str(input("Enter the type of regulation (up or down): "))
+time_regulation, quantity_regulation, duration_regulation, type_regulation = get_flexibility_conditions()
+
 print("Request: {} regulation of {} Mwh needed for {} minutes at {}".format(type_regulation, quantity_regulation, duration_regulation, time_regulation))
 
 df_summed_flex, total_energy_needed_flex = model_charging_flexibility(df_car, df_simulation, df_summed_flex, car_number_simulated, max_power,time_regulation, quantity_regulation, duration_regulation, type_regulation, ratio = ratio)

@@ -8,16 +8,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import datetime
-from tqdm import tqdm
-from sklearn.preprocessing import PolynomialFeatures
-from sklearn.linear_model import LinearRegression
-import json
-import requests
 from datetime import datetime
 from datetime import timedelta
-import random
+import re
 
-from src.model_charging import model_charging, model_charging_constraint
+from src.model_charging import model_charging_constraint
 
 def visualize_kwh_delivered(df):
     df = df.sort_values(by=['kwh_delivered'], ascending=False).reset_index(drop=True).copy()
@@ -187,3 +182,25 @@ def generate_time_intervals(start_time, num_minutes):
         current_time += interval
 
     return time_intervals
+
+
+def get_flexibility_conditions():
+    time_pattern = re.compile(r'^([01]\d|2[0-3]):([0-5]\d)$')
+    while True:
+        time_regulation = input("Enter the time when regulation is needed (HH:MM): ")
+        
+        if time_pattern.match(time_regulation):
+            break
+        else:
+            print("Invalid format. Please enter the time in HH:MM format.")
+    quantity_regulation = int(input("Enter the quantity of energy regulation needed in Mwh: "))
+    duration_regulation = int(input("Enter the duration of the regulation in minutes: "))
+    while True:
+        type_regulation = input("Enter the type of regulation (up or down): ").lower()  # Convert input to lowercase for case-insensitivity
+        
+        if type_regulation in ["up", "down"]:
+            break
+        else:
+            print("Invalid input. Please enter 'up' or 'down'.")
+    
+    return time_regulation, quantity_regulation, duration_regulation, type_regulation
