@@ -17,53 +17,57 @@ plt.ioff()
 
 ## This part is used to forecast the number of cars in the future.
 
-# data on EV adoption from: https://www.bfs.admin.ch/bfs/en/home/statistics/mobility-transport/transport-infrastructure-vehicles/vehicles/road-vehicles-stock-level-motorisation.html
-# Decide the consrtaint for the number of different vehicles present in 2050
-print("##############################################################################################################################################################################")
-print("Loading historical data on EV adoption...")
+def main():
+    # data on EV adoption from: https://www.bfs.admin.ch/bfs/en/home/statistics/mobility-transport/transport-infrastructure-vehicles/vehicles/road-vehicles-stock-level-motorisation.html
+    # Decide the consrtaint for the number of different vehicles present in 2050
+    print("##############################################################################################################################################################################")
+    print("Loading historical data on EV adoption...")
 
-data = pd.read_csv('data/ev_data.csv', encoding='ISO-8859-1')
+    data = pd.read_csv('data/ev_data.csv', encoding='ISO-8859-1')
 
-data_ev = process_data(data)
+    data_ev = process_data(data)
 
-print("Forecasting the number of EV in Switzerland up to 2050...")
-data_ev_forecast = forecast_number_car(data_ev, year_constraint=2050, petrol_constraint=10000, diesel_constraint=0 , hybrid_constraint = 1e6, battery_elecrtic_constraint=5e6, pol_degree=3, weights = "exp").get_df()
+    print("Forecasting the number of EV in Switzerland up to 2050...")
+    data_ev_forecast = forecast_number_car(data_ev, year_constraint=2050, petrol_constraint=10000, diesel_constraint=0 , hybrid_constraint = 1e6, battery_elecrtic_constraint=5e6, pol_degree=3, weights = "exp").get_df()
 
-plot_evolution(data_ev_forecast)
-save_plot(data_ev_forecast, "plots/evolution_number_car.png")
+    plot_evolution(data_ev_forecast)
+    save_plot(data_ev_forecast, "plots/evolution_number_car.png")
 
 
-print("##############################################################################################################################################################################")
+    print("##############################################################################################################################################################################")
 
-data_charging, event_counts = load_data()
-# visualize_kwh_delivered(data_charging)
-# visualize_hourly_distribution(event_counts)
+    data_charging, event_counts = load_data()
+    # visualize_kwh_delivered(data_charging)
+    # visualize_hourly_distribution(event_counts)
 
-year_simulation = int(input("Enter the year of simulation: "))
+    year_simulation = int(input("Enter the year of simulation: "))
 
-ratio_car_charging = 0.8
-car_number_real = get_number_EV(data_ev_forecast, year_simulation)*ratio_car_charging
-car_number_simulated = 5000
-ratio = car_number_real / car_number_simulated
-print("Number of EV in {}: {}".format(year_simulation, car_number_real))
+    ratio_car_charging = 0.8
+    car_number_real = get_number_EV(data_ev_forecast, year_simulation)*ratio_car_charging
+    car_number_simulated = 1000
+    ratio = car_number_real / car_number_simulated
+    print("Number of EV in {}: {}".format(year_simulation, car_number_real))
 
-df_car = initialize_dataframe_cars(car_number_simulated)
-df_simulation = initialize_dataframe_states(power=9, car_number=car_number_simulated, data_charging=data_charging, event_counts=event_counts)
+    df_car = initialize_dataframe_cars(car_number_simulated)
+    df_simulation = initialize_dataframe_states(power=9, car_number=car_number_simulated, data_charging=data_charging, event_counts=event_counts)
 
-df_summed, total_energy_needed = model_charging_normal(df_car, df_simulation, car_number_simulated, ratio)
-visualize_normal_charging(df_summed, car_number_real, year_simulation, total_energy_needed, ratio)
+    df_summed, total_energy_needed = model_charging_normal(df_car, df_simulation, car_number_simulated, ratio)
+    visualize_normal_charging(df_summed, car_number_real, year_simulation, total_energy_needed, ratio)
 
-print("##############################################################################################################################################################################")
+    print("##############################################################################################################################################################################")
 
-max_power = int(input("Enter the maximum power consumption on the grid in Mwh: "))
-df_summed_flex, total_energy_needed_flex = model_charging_flexibility(df_car, df_simulation, df_summed, car_number_simulated, max_power,time_regulation="00:00", quantity_regulation = 0, duration_regulation = 0, type_regulation = None, ratio = ratio)
-visualize_flex_charging(df_summed_flex, car_number_real, year_simulation, total_energy_needed_flex, ratio, "plots/flex_charging_{}.png".format(max_power))
+    max_power = int(input("Enter the maximum power consumption on the grid in Mwh: "))
+    df_summed_flex, total_energy_needed_flex = model_charging_flexibility(df_car, df_simulation, df_summed, car_number_simulated, max_power,time_regulation="00:00", quantity_regulation = 0, duration_regulation = 0, type_regulation = None, ratio = ratio)
+    visualize_flex_charging(df_summed_flex, car_number_real, year_simulation, total_energy_needed_flex, ratio, "plots/flex_charging_{}.png".format(max_power))
 
-print("##############################################################################################################################################################################")
+    print("##############################################################################################################################################################################")
 
-time_regulation, quantity_regulation, duration_regulation, type_regulation = get_flexibility_conditions()
+    time_regulation, quantity_regulation, duration_regulation, type_regulation = get_flexibility_conditions()
 
-print("Request: {} regulation of {} Mwh needed for {} minutes at {}".format(type_regulation, quantity_regulation, duration_regulation, time_regulation))
+    print("Request: {} regulation of {} Mwh needed for {} minutes at {}".format(type_regulation, quantity_regulation, duration_regulation, time_regulation))
 
-df_summed_flex, total_energy_needed_flex = model_charging_flexibility(df_car, df_simulation, df_summed_flex, car_number_simulated, max_power,time_regulation, quantity_regulation, duration_regulation, type_regulation, ratio = ratio)
-visualize_flex_charging(df_summed_flex, car_number_real, year_simulation, total_energy_needed_flex, ratio, "plots/flex_charging_{}_{}_{}_{}.png".format(time_regulation, quantity_regulation, duration_regulation, type_regulation))
+    df_summed_flex, total_energy_needed_flex = model_charging_flexibility(df_car, df_simulation, df_summed_flex, car_number_simulated, max_power,time_regulation, quantity_regulation, duration_regulation, type_regulation, ratio = ratio)
+    visualize_flex_charging(df_summed_flex, car_number_real, year_simulation, total_energy_needed_flex, ratio, "plots/flex_charging_{}_{}_{}_{}.png".format(time_regulation, quantity_regulation, duration_regulation, type_regulation))
+
+if __name__ == "__main__":
+    main()
