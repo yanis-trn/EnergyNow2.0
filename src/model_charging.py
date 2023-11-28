@@ -142,7 +142,7 @@ def model_charging_normal(df_car,df_simulation, car_number, ratio):
     columns_to_multiply = ["down", "total"]
     df_summed_modif[columns_to_multiply] = df_summed_modif[columns_to_multiply].apply(lambda x: (x * ratio) / 1000)
     total_energy_needed = df_summed_modif['total'].sum()
-    print("total energy needed over the day: {} Mwh".format(round(total_energy_needed,2)))
+    
 
     return df_summed, total_energy_needed
 

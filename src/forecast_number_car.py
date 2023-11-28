@@ -7,15 +7,11 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-import datetime
-from tqdm import tqdm
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import LinearRegression
-import json
-import requests
-from datetime import datetime
-from datetime import timedelta
-import random
+import PySimpleGUI as sg
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 def process_data(df:  pd.core.frame.DataFrame)  -> pd.DataFrame:
     ## Function to keep useful information from the data 
@@ -137,3 +133,9 @@ def save_plot(df: pd.core.frame.DataFrame, save_path = "plots") -> None:
     plt.title('Evolution of the number of cars in Switzerland over years')
     plt.savefig(save_path)
     plt.close()
+
+def draw_figure(canvas_elem, figure):
+    figure_canvas_agg = FigureCanvasTkAgg(figure, master=canvas_elem.Widget)
+    figure_canvas_agg.draw()
+    figure_canvas_agg.get_tk_widget().pack(side="top", fill="both", expand=1)
+    return figure_canvas_agg
