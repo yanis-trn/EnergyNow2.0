@@ -3,7 +3,7 @@ This repository corresponds to the proposed solution from the SmartFlex team foo
 
 ## Code structure
 
-'
+```
 ├── README.md
 ├── data
 │   ├── acndata_sessions.json
@@ -19,4 +19,4 @@ This repository corresponds to the proposed solution from the SmartFlex team foo
 │   ├── model_charging.py
 │   └── utils.py
 └── main.py
-'
+```
