@@ -42,8 +42,8 @@ data_charging, event_counts = load_data()
 year_simulation = int(input("Enter the year of simulation: "))
 
 ratio_car_charging = 0.8
-car_number_real = get_number_EV(data_ev_forecast, year_simulation)*ratio_car_charging
-car_number_simulated = 5000
+car_number_real = int(get_number_EV(data_ev_forecast, year_simulation)*ratio_car_charging)
+car_number_simulated = 1000
 ratio = car_number_real / car_number_simulated
 print("Number of EV in {}: {}".format(year_simulation, car_number_real))
 
@@ -67,3 +67,21 @@ print("Request: {} regulation of {} Mwh needed for {} minutes at {}".format(type
 
 df_summed_flex, total_energy_needed_flex = model_charging_flexibility(df_car, df_simulation, df_summed_flex, car_number_simulated, max_power,time_regulation, quantity_regulation, duration_regulation, type_regulation, ratio = ratio)
 visualize_flex_charging(df_summed_flex, car_number_real, year_simulation, total_energy_needed_flex, ratio, "plots/flex_charging_{}_{}_{}_{}.png".format(time_regulation, quantity_regulation, duration_regulation, type_regulation))
+
+
+while True:
+    print("Do you want to run another simulation? (y/n)")
+    answer = input().lower()
+
+    if answer != 'y':
+        break
+
+    time_regulation, quantity_regulation, duration_regulation, type_regulation = get_flexibility_conditions()
+
+    print("Request: {} regulation of {} MWh needed for {} minutes at {}".format(type_regulation, quantity_regulation, duration_regulation, time_regulation))
+
+    df_summed_flex, total_energy_needed_flex = model_charging_flexibility(df_car, df_simulation, df_summed_flex, car_number_simulated, max_power, time_regulation, quantity_regulation, duration_regulation, type_regulation, ratio=ratio)
+    visualize_flex_charging(df_summed_flex, car_number_real, year_simulation, total_energy_needed_flex, ratio, "plots/flex_charging_{}_{}_{}_{}.png".format(time_regulation, quantity_regulation, duration_regulation, type_regulation))
+
+    print("##############################################################################################################################################################################")
+print("Simulation finished.")
