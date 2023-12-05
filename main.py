@@ -55,7 +55,7 @@ visualize_normal_charging(df_summed, car_number_real, year_simulation, total_ene
 
 print("##############################################################################################################################################################################")
 
-max_power = int(input("Enter the maximum power consumption on the grid in Mwh: "))
+max_power = int(input("Enter the maximum power consumption on the grid in MW: "))
 df_summed_flex, total_energy_needed_flex = model_charging_flexibility(df_car, df_simulation, df_summed, car_number_simulated, max_power,time_regulation="00:00", quantity_regulation = 0, duration_regulation = 0, type_regulation = None, ratio = ratio)
 visualize_flex_charging(df_summed_flex, car_number_real, year_simulation, total_energy_needed_flex, ratio, "plots/flex_charging_{}.png".format(max_power))
 
@@ -63,7 +63,7 @@ print("#########################################################################
 
 time_regulation, quantity_regulation, duration_regulation, type_regulation = get_flexibility_conditions()
 
-print("Request: {} regulation of {} Mwh needed for {} minutes at {}".format(type_regulation, quantity_regulation, duration_regulation, time_regulation))
+print("Request: {} regulation of {} MW needed for {} minutes at {}".format(type_regulation, quantity_regulation, duration_regulation, time_regulation))
 
 df_summed_flex, total_energy_needed_flex = model_charging_flexibility(df_car, df_simulation, df_summed_flex, car_number_simulated, max_power,time_regulation, quantity_regulation, duration_regulation, type_regulation, ratio = ratio)
 visualize_flex_charging(df_summed_flex, car_number_real, year_simulation, total_energy_needed_flex, ratio, "plots/flex_charging_{}_{}_{}_{}.png".format(time_regulation, quantity_regulation, duration_regulation, type_regulation))
@@ -78,7 +78,7 @@ while True:
 
     time_regulation, quantity_regulation, duration_regulation, type_regulation = get_flexibility_conditions()
 
-    print("Request: {} regulation of {} MWh needed for {} minutes at {}".format(type_regulation, quantity_regulation, duration_regulation, time_regulation))
+    print("Request: {} regulation of {} MW needed for {} minutes at {}".format(type_regulation, quantity_regulation, duration_regulation, time_regulation))
 
     df_summed_flex, total_energy_needed_flex = model_charging_flexibility(df_car, df_simulation, df_summed_flex, car_number_simulated, max_power, time_regulation, quantity_regulation, duration_regulation, type_regulation, ratio=ratio)
     visualize_flex_charging(df_summed_flex, car_number_real, year_simulation, total_energy_needed_flex, ratio, "plots/flex_charging_{}_{}_{}_{}.png".format(time_regulation, quantity_regulation, duration_regulation, type_regulation))

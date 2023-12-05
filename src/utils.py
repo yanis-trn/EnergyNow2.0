@@ -193,7 +193,7 @@ def get_flexibility_conditions():
             break
         else:
             print("Invalid format. Please enter the time in HH:MM format.")
-    quantity_regulation = int(input("Enter the quantity of energy regulation needed in Mwh: "))
+    quantity_regulation = int(input("Enter the quantity of energy regulation needed in MW: "))
     duration_regulation = int(input("Enter the duration of the regulation in minutes: "))
     while True:
         type_regulation = input("Enter the type of regulation (up or down): ").lower()  # Convert input to lowercase for case-insensitivity
