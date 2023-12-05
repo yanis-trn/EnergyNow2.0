@@ -25,9 +25,6 @@ Python 3.11.5 was used for this project
 │   └── utils.py
 └── main.py
 ```
-## Demonstration video
-
-![demonstration video](plots/DEMO%20EnergyNow.mov)
 
 ## Additionnal informations
-Additionnal informations on the model can be found [here](https://drive.google.com/drive/folders/1VImr6ZG_6lgR7DtYY-NhQxtK-Vuy53o2?usp=share_link)
+Additionnal informations on the model and demonstration video can be found [here](https://drive.google.com/drive/folders/1VImr6ZG_6lgR7DtYY-NhQxtK-Vuy53o2?usp=share_link)
